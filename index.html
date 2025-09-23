@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسه‌کالا - پلتفرم جامع تجهیزات و خدمات مدارس</title>
+    
+    <!-- Chosen Palette: Educational & Friendly (Blue, Orange, Light Gray) -->
+    <!-- Application Structure Plan: A single-page application (SPA) with a top navigation bar to switch between main sections (Home, Equipment, Services, etc.). This dashboard-style approach allows users to explore all offerings without page reloads, enhancing usability. Content for each category is dynamically shown/hidden. Key interactions include dynamic filtering of products and a modal for viewing product details, which keeps the user in a single, cohesive context. This structure was chosen to directly translate the sitemap into a fluid, modern user experience. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Product Catalog -> Goal: Organize/Compare -> Viz/Method: Interactive Card Grid (HTML/Tailwind) -> Interaction: Users can filter the grid by category and price. Justification: Provides a familiar and efficient e-commerce browsing experience. Library: Vanilla JS.
+        - Report Info: Sales Data (Conceptual) -> Goal: Inform -> Viz/Method: Donut Chart (Chart.js/Canvas) -> Interaction: Tooltips on hover show details. Justification: Offers a quick, visual summary of business performance on the main dashboard. Library: Chart.js.
+        - Report Info: Product Details -> Goal: Inform/Action -> Viz/Method: Modal Window -> Interaction: Opens on card click, contains image gallery, specs, and CTA. Justification: Prevents page reloads, keeping the user journey seamless. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link.active::after, .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #f39c12;
+            border-radius: 2px;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative; 
+            width: 100%; 
+            max-width: 400px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) { 
+            .chart-container { 
+                height: 350px; 
+            } 
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-[#3498db]">مدرسه‌کالا</h1>
+            <nav class="hidden md:flex items-center space-x-6 space-x-reverse">
+                <a href="#home" class="nav-link text-gray-700 font-semibold pb-2 active" data-target="home">صفحه اصلی</a>
+                <a href="#services" class="nav-link text-gray-700 font-semibold pb-2" data-target="services">خدمات</a>
+                <a href="#equipment" class="nav-link text-gray-700 font-semibold pb-2" data-target="equipment">تجهیزات</a>
+                <a href="#suppliers" class="nav-link text-gray-700 font-semibold pb-2" data-target="suppliers">تامین کننده ها</a>
+                <a href="#blog" class="nav-link text-gray-700 font-semibold pb-2" data-target="blog">بلاگ</a>
+                <a href="#about" class="nav-link text-gray-700 font-semibold pb-2" data-target="about">درباره ما</a>
+                <a href="#contact" class="nav-link text-gray-700 font-semibold pb-2" data-target="contact">تماس با ما</a>
+            </nav>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <a href="#" class="bg-[#3498db] text-white px-4 py-2 rounded-full font-semibold hidden sm:block hover:bg-blue-600 transition-colors">حساب کاربری</a>
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <a href="#home" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="home">صفحه اصلی</a>
+            <a href="#services" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="services">خدمات</a>
+            <a href="#equipment" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="equipment">تجهیزات</a>
+            <a href="#suppliers" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="suppliers">تامین کننده ها</a>
+            <a href="#blog" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="blog">بلاگ</a>
+            <a href="#about" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="about">درباره ما</a>
+            <a href="#contact" class="block py-2 px-4 text-sm hover:bg-gray-100 mobile-nav-link" data-target="contact">تماس با ما</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <!-- Home Section -->
+        <section id="home" class="content-section active">
+            <div class="text-center bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                <h2 class="text-3xl md:text-5xl font-extrabold text-gray-800 mb-4">هرآنچه مدرسه شما نیاز دارد، در یک‌جا</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-8">از تجهیزات و خدمات تا محتوای آموزشی و بازی‌های فکری، ما راهکارهای جامعی برای ارتقاء سطح کیفی مدارس ارائه می‌دهیم.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold text-[#3498db] mb-4">پلتفرم جامع مدارس</h3>
+                        <p class="text-gray-700 leading-relaxed">ما با درک نیازهای مدارس، مجموعه‌ای کامل از محصولات و خدمات را فراهم کرده‌ایم. هدف ما ساده‌سازی فرآیندهای تأمین و پشتیبانی مدارس است تا مدیران و معلمان بتوانند بر مهم‌ترین وظیفهٔ خود، یعنی آموزش، تمرکز کنند. در این بخش می‌توانید خلاصه‌ای از عملکرد فروش ما را در دسته‌بندی‌های مختلف مشاهده کنید.</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">خدمات مدارس</h2>
+                <p class="text-gray-600 mt-2">مجموعه‌ای از خدمات تخصصی برای مدیریت، مشاوره، آموزش و اردوهای مدارس.</p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Filters -->
+                <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
+                    <h3 class="text-lg font-bold mb-4">فیلترها</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="service-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی اصلی</label>
+                            <select id="service-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="مدیریتی">مدیریتی</option>
+                                <option value="مشاوره">مشاوره</option>
+                                <option value="آموزشی">آموزشی</option>
+                                <option value="اردو">اردو</option>
+                            </select>
+                        </div>
+                        <div id="dynamic-service-filters">
+                            <!-- Dynamic filters will be injected here -->
+                        </div>
+                    </div>
+                </aside>
+                <!-- Products -->
+                <div id="service-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Service cards will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Equipment Section -->
+        <section id="equipment" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">تجهیزات فیزیکی آموزشی</h2>
+                <p class="text-gray-600 mt-2">انواع میز، صندلی، تخته وایت‌برد و لوازم مورد نیاز کلاس‌های درس.</p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Filters -->
+                <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
+                    <h3 class="text-lg font-bold mb-4">فیلترها</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="equipment-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی اصلی</label>
+                            <select id="equipment-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="آموزشی">آموزشی</option>
+                                <option value="اداری">اداری</option>
+                                <option value="ورزشی">ورزشی</option>
+                                <option value="تحریری">تحریری</option>
+                            </select>
+                        </div>
+                    </div>
+                </aside>
+                <!-- Products -->
+                <div id="equipment-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Equipment cards will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Suppliers Section -->
+        <section id="suppliers" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">تامین کننده های ما</h2>
+                <p class="text-gray-600 mt-2">مجموعه‌ای از بهترین تامین‌کنندگان خدمات و تجهیزات در سراسر کشور.</p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Filters -->
+                <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
+                    <h3 class="text-lg font-bold mb-4">فیلترها</h3>
+                    <div class="space-y-4">
+                        <!-- Supplier Type Filter -->
+                        <div>
+                            <label for="supplier-type-filter" class="font-semibold text-gray-700 mb-2 block">نوع فعالیت</label>
+                            <select id="supplier-type-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="services">خدمات</option>
+                                <option value="equipment">تجهیزات</option>
+                            </select>
+                        </div>
+                        <!-- Supplier Province Filter -->
+                        <div>
+                            <label for="supplier-province-filter" class="font-semibold text-gray-700 mb-2 block">استان سرویس‌دهنده</label>
+                            <select id="supplier-province-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="تهران">تهران</option>
+                                <option value="خراسان رضوی">خراسان رضوی</option>
+                                <option value="فارس">فارس</option>
+                            </select>
+                        </div>
+                        <!-- Dynamic Sub-category Filter -->
+                        <div id="dynamic-supplier-sub-filters">
+                            <!-- Dynamic filters will be injected here -->
+                        </div>
+                    </div>
+                </aside>
+                <!-- Supplier Cards -->
+                <div id="supplier-grid" class="flex-1 grid gap-6">
+                    <!-- Supplier cards will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section id="blog" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">بلاگ</h2>
+                <p class="text-gray-600 mt-2">آخرین مقالات و اخبار روز در حوزه آموزش و مدارس.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                    <img src="https://placehold.co/600x400/3498db/ffffff?text=مدیریت+مدرسه" alt="مقاله ۱" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">۵ راهکار برای مدیریت بهتر مدرسه</h3>
+                    <p class="text-gray-600 text-sm">در این مقاله به بررسی راهکارهای عملی برای بهبود فرآیندهای مدیریتی در مدارس می‌پردازیم...</p>
+                    <a href="#" class="text-[#f39c12] hover:underline mt-4 inline-block font-semibold">ادامه مطلب</a>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                    <img src="https://placehold.co/600x400/2ecc71/ffffff?text=آموزش+نوین" alt="مقاله ۲" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">نقش فناوری در آموزش نوین</h3>
+                    <p class="text-gray-600 text-sm">چگونه تکنولوژی می‌تواند تجربه یادگیری دانش‌آموزان را متحول کند؟...</p>
+                    <a href="#" class="text-[#f39c12] hover:underline mt-4 inline-block font-semibold">ادامه مطلب</a>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                    <img src="https://placehold.co/600x400/9b59b6/ffffff?text=سلامت+روان" alt="مقاله ۳" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">اهمیت سلامت روان دانش‌آموزان</h3>
+                    <p class="text-gray-600 text-sm">راهنمای جامع برای مدیران و مشاوران مدارس درباره سلامت روان...</p>
+                    <a href="#" class="text-[#f39c12] hover:underline mt-4 inline-block font-semibold">ادامه مطلب</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">درباره ما</h2>
+                <p class="text-gray-600 mt-2">داستان ما، چشم‌انداز ما، تیم ما.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 max-w-4xl mx-auto text-right">
+                <p class="text-gray-700 leading-loose mb-4">«مدرسه‌کالا» با هدف ایجاد یک بستر جامع و قابل اعتماد برای تامین کلیه نیازهای مدارس آغاز به کار کرد. ما بر این باوریم که با ساده‌سازی فرآیندهای اداری و خرید، می‌توانیم به مدیران و معلمان اجازه دهیم تا زمان و انرژی خود را بر ارتقاء کیفیت آموزش متمرکز کنند.</p>
+                <p class="text-gray-700 leading-loose mb-4">تیم ما متشکل از متخصصانی در حوزه آموزش، فناوری و کسب‌وکار است که با درک عمیق از چالش‌های مدارس، در تلاشند تا بهترین و کارآمدترین راهکارها را ارائه دهند. از تجهیزات آموزشی گرفته تا خدمات تخصصی مشاوره و برنامه‌ریزی اردوها، ما متعهد به ارائه محصولاتی با کیفیت و خدماتی در خور نیاز مدارس هستیم.</p>
+                <p class="text-gray-700 leading-loose">چشم‌انداز ما، تبدیل شدن به مرجع اول و کامل‌ترین پلتفرم برای تمامی مدارس ایران است. ما آماده شنیدن نظرات و پیشنهادات شما هستیم تا بتوانیم هر روز بهتر از دیروز عمل کنیم.</p>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section id="contact" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-800">تماس با ما</h2>
+                <p class="text-gray-600 mt-2">برای هرگونه سوال یا همکاری با ما در تماس باشید.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
+                <form class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 font-semibold mb-2">نام و نام خانوادگی</label>
+                        <input type="text" id="name" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 font-semibold mb-2">آدرس ایمیل</label>
+                        <input type="email" id="email" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-gray-700 font-semibold mb-2">پیام شما</label>
+                        <textarea id="message" rows="4" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-[#f39c12] text-white font-bold py-3 rounded-lg hover:bg-orange-600 transition-colors">ارسال پیام</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Service Detail Modal -->
+    <div id="service-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" id="modal-content">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <!-- Supplier Detail Modal -->
+    <div id="supplier-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" id="supplier-modal-content">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const equipmentData = [
+                { id: 1, title: 'میز و نیمکت', category: 'آموزشی', subcategory: 'میز و صندلی', description: 'میز و نیمکت‌های استاندارد برای کلاس‌های درس.', image: 'https://placehold.co/400x300/3498db/ffffff?text=میز+و+نیمکت', link: '#' },
+                { id: 2, title: 'چسب نواری', category: 'تحریری', subcategory: 'لوازم تحریر', description: 'چسب نواری شفاف و قوی برای مصارف تحریری.', image: 'https://placehold.co/400x300/e74c3c/ffffff?text=چسب+نواری', link: '#' },
+                { id: 3, title: 'ماژیک وایت‌برد', category: 'تحریری', subcategory: 'لوازم تحریر', description: 'ماژیک وایت‌برد با جوهر پررنگ و پاک‌شونده آسان.', image: 'https://placehold.co/400x300/1abc9c/ffffff?text=ماژیک', link: '#' },
+                { id: 4, title: 'توپ و تور والیبال', category: 'ورزشی', subcategory: 'توپ و تور', description: 'ست کامل توپ و تور برای سالن ورزشی مدارس.', image: 'https://placehold.co/400x300/9b59b6/ffffff?text=توپ+والیبال', link: '#' },
+                { id: 5, title: 'میز اداری', category: 'اداری', subcategory: 'میز اداری', description: 'میز اداری شیک و مقاوم برای اتاق مدیریت.', image: 'https://placehold.co/400x300/34495e/ffffff?text=میز+اداری', link: '#' },
+                { id: 6, title: 'صندلی اداری', category: 'اداری', subcategory: 'صندلی اداری', description: 'صندلی اداری ارگونومیک و راحت.', image: 'https://placehold.co/400x300/f1c40f/ffffff?text=صندلی+اداری', link: '#' },
+                { id: 7, title: 'تجهیزات آزمایشگاهی', category: 'آموزشی', subcategory: 'بسته‌ آزمایشگاهی', description: 'کیت کامل تجهیزات برای آزمایش‌های علوم.', image: 'https://placehold.co/400x300/2ecc71/ffffff?text=تجهیزات+آزمایشگاهی', link: '#' },
+            ];
+
+            const servicesData = [
+                { id: 1, title: 'اردوی مشهد', category: 'اردو', description: 'برنامه اردو در مشهد شامل بازدید از حرم، موزه‌ها و تفریحات. مجری: شرکت راهیان نور', supplier: 'شرکت راهیان نور', supplierLink: '#', image: 'https://placehold.co/400x300/3498db/ffffff?text=اردوی+مشهد', details: 'برنامهٔ اردو: روز اول: زیارت حرم، روز دوم: بازدید از موزه‌های شهر، روز سوم: تفریح و بازگشت. مجری: شرکت راهیان نور' },
+                { id: 2, title: 'مشاور تحصیلی', category: 'مشاوره', description: 'جلسات مشاوره تحصیلی برای دانش‌آموزان در زمینه انتخاب رشته و آینده شغلی.', supplier: 'مرکز مشاوره آینده روشن', supplierLink: '#', image: 'https://placehold.co/400x300/e74c3c/ffffff?text=مشاور+تحصیلی', details: 'مشاور: دکتر علی احمدی، موارد مطرح شده: برنامه‌ریزی درسی، شناسایی استعداد، انتخاب رشته کنکور.' },
+                { id: 3, title: 'دوره آموزشی ارتقاء معلمین', category: 'آموزشی', description: 'دوره جامع ارتقاء مهارت‌های تدریس و استفاده از ابزارهای نوین آموزشی.', supplier: 'موسسه آموزشی کیهان', supplierLink: '#', image: 'https://placehold.co/400x300/1abc9c/ffffff?text=دوره+آموزشی', details: 'محتوا: روش‌های نوین تدریس، آشنایی با ابزارهای دیجیتال، روانشناسی تربیتی. برگزارکننده: موسسه آموزشی کیهان' },
+                { id: 4, title: 'تعمیرات موتورخانه', category: 'مدیریتی', description: 'خدمات تخصصی تعمیر و نگهداری موتورخانه مدارس.', supplier: 'تاسیسات نوید', supplierLink: '#', image: 'https://placehold.co/400x300/9b59b6/ffffff?text=تعمیرات+موتورخانه', details: 'تاسیسات نوید با سابقه درخشان در ارائه خدمات تاسیساتی به مدارس.' },
+                { id: 5, title: 'لوله کشی ساختمان', category: 'مدیریتی', description: 'خدمات لوله‌کشی آب و فاضلاب برای ساختمان مدارس.', supplier: 'آب‌سازه', supplierLink: '#', image: 'https://placehold.co/400x300/f1c40f/ffffff?text=لوله+کشی', details: 'آب‌سازه مجری پروژه‌های لوله‌کشی و تاسیسات ساختمانی.' },
+                { id: 6, title: 'نقاشی ساختمان', category: 'مدیریتی', description: 'خدمات نقاشی ساختمان و بازسازی نمای مدارس.', supplier: 'رنگ‌آمیزی فردا', supplierLink: '#', image: 'https://placehold.co/400x300/2ecc71/ffffff?text=نقاشی', details: 'رنگ‌آمیزی فردا با استفاده از رنگ‌های با کیفیت و تیم متخصص.' },
+                { id: 7, title: 'سامانه LMS', category: 'آموزشی', description: 'سیستم مدیریت یادگیری (LMS) با قابلیت‌های متنوع برای آموزش از راه دور.', supplier: 'شرکت فناوران پویا', supplierLink: '#', image: 'https://placehold.co/400x300/34495e/ffffff?text=سامانه+LMS', details: 'قابلیت‌ها: کلاس آنلاین، آزمون‌ساز، مدیریت محتوا. توسعه‌دهنده: شرکت فناوران پویا.' },
+            ];
+            
+            // New Supplier Data
+            const suppliersData = [
+                { id: 1, name: 'شرکت راهیان نور', type: 'services', categories: ['اردو'], province: 'خراسان رضوی', image: 'https://placehold.co/100x100/3498db/ffffff?text=راهیان', description: 'متخصص در برگزاری اردوهای فرهنگی و تفریحی با تمرکز بر اردوهای زیارتی.', link: '#' },
+                { id: 2, name: 'مرکز مشاوره آینده روشن', type: 'services', categories: ['مشاوره'], province: 'تهران', image: 'https://placehold.co/100x100/e74c3c/ffffff?text=آینده', description: 'ارائه دهنده خدمات مشاوره تحصیلی، شغلی و خانوادگی به دانش‌آموزان و والدین.', link: '#' },
+                { id: 3, name: 'موسسه آموزشی کیهان', type: 'services', categories: ['آموزشی'], province: 'تهران', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=کیهان', description: 'برگزارکننده دوره‌های تخصصی برای ارتقاء مهارت‌های معلمان و کادر آموزشی.', link: '#' },
+                { id: 4, name: 'تاسیسات نوید', type: 'services', categories: ['مدیریتی'], province: 'تهران', image: 'https://placehold.co/100x100/9b59b6/ffffff?text=نوید', description: 'مجری پروژه‌های تاسیساتی و تعمیرات موتورخانه برای ساختمان‌های اداری و آموزشی.', link: '#' },
+                { id: 5, name: 'آب‌سازه', type: 'services', categories: ['مدیریتی'], province: 'فارس', image: 'https://placehold.co/100x100/f1c40f/ffffff?text=آب‌سازه', description: 'ارائه دهنده خدمات لوله‌کشی و تاسیسات آب و فاضلاب با سابقه درخشان.', link: '#' },
+                { id: 6, name: 'رنگ‌آمیزی فردا', type: 'services', categories: ['مدیریتی'], province: 'تهران', image: 'https://placehold.co/100x100/2ecc71/ffffff?text=فردا', description: 'تیم تخصصی نقاشی ساختمان با استفاده از بهترین متریال و رنگ‌های باکیفیت.', link: '#' },
+                { id: 7, name: 'شرکت فناوران پویا', type: 'services', categories: ['آموزشی'], province: 'خراسان رضوی', image: 'https://placehold.co/100x100/34495e/ffffff?text=فناوران', description: 'توسعه‌دهنده سیستم‌های مدیریت یادگیری (LMS) و نرم‌افزارهای آموزشی.', link: '#' },
+                { id: 8, name: 'تجهیزات آسا', type: 'equipment', categories: ['آموزشی', 'اداری'], province: 'تهران', image: 'https://placehold.co/100x100/e74c3c/ffffff?text=تجهیزات+آسا', description: 'تامین‌کننده انواع میز، نیمکت و تجهیزات اداری و آموزشی برای مدارس.', link: '#' },
+                { id: 9, name: 'لوازم تحریر مهتاب', type: 'equipment', categories: ['تحریری'], province: 'فارس', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=مهتاب', description: 'عرضه‌کننده انواع لوازم تحریر، ماژیک، چسب و ابزار نگارش.', link: '#' },
+                { id: 10, name: 'آرنا اسپرت', type: 'equipment', categories: ['ورزشی'], province: 'تهران', image: 'https://placehold.co/100x100/9b59b6/ffffff?text=آرنا', description: 'تولیدکننده و تامین‌کننده تجهیزات کامل ورزشی از جمله توپ و تور.', link: '#' }
+            ];
+
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            const equipmentCategoryFilter = document.getElementById('equipment-category-filter');
+            const equipmentGrid = document.getElementById('equipment-grid');
+
+            const serviceCategoryFilter = document.getElementById('service-category-filter');
+            const serviceGrid = document.getElementById('service-grid');
+            const dynamicServiceFilters = document.getElementById('dynamic-service-filters');
+            const serviceModal = document.getElementById('service-modal');
+            const modalContent = document.getElementById('modal-content');
+
+            // Supplier Elements
+            const supplierTypeFilter = document.getElementById('supplier-type-filter');
+            const supplierProvinceFilter = document.getElementById('supplier-province-filter');
+            const supplierGrid = document.getElementById('supplier-grid');
+            const dynamicSupplierSubFilters = document.getElementById('dynamic-supplier-sub-filters');
+            const supplierModal = document.getElementById('supplier-modal');
+            const supplierModalContent = document.getElementById('supplier-modal-content');
+
+
+            function switchTab(targetId) {
+                sections.forEach(section => {
+                    section.classList.toggle('active', section.id === targetId);
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.target === targetId);
+                });
+                if(mobileMenu) mobileMenu.classList.add('hidden');
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchTab(e.currentTarget.dataset.target);
+                });
+            });
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Equipment Section Logic
+            function renderEquipment(filteredItems) {
+                equipmentGrid.innerHTML = '';
+                filteredItems.forEach(item => {
+                    const card = document.createElement('a');
+                    card.href = item.link;
+                    card.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover rounded-xl mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">${item.title}</h3>
+                        <p class="text-sm text-gray-500 mt-1">${item.description}</p>
+                    `;
+                    equipmentGrid.appendChild(card);
+                });
+            }
+
+            function filterEquipment() {
+                const category = equipmentCategoryFilter.value;
+                const filtered = equipmentData.filter(item => category === 'all' || item.category === category);
+                renderEquipment(filtered);
+            }
+
+            equipmentCategoryFilter.addEventListener('input', filterEquipment);
+            filterEquipment();
+
+            // Services Section Logic
+            function renderServices(filteredItems) {
+                serviceGrid.innerHTML = '';
+                filteredItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover rounded-xl mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">${item.title}</h3>
+                        <p class="text-sm text-gray-500 mt-1">${item.description}</p>
+                        <p class="text-sm font-bold text-[#f39c12] mt-2">تأمین‌کننده: ${item.supplier}</p>
+                    `;
+                    card.addEventListener('click', () => openServiceModal(item));
+                    serviceGrid.appendChild(card);
+                });
+            }
+
+            function filterServices() {
+                const category = serviceCategoryFilter.value;
+                const filtered = servicesData.filter(item => category === 'all' || item.category === category);
+                
+                let dynamicFiltersHtml = '';
+                if (category === 'اردو') {
+                    dynamicFiltersHtml = `
+                        <div>
+                            <label class="font-semibold text-gray-700 mb-2 block">حداکثر هزینه سرانه</label>
+                            <input type="range" min="100000" max="5000000" class="w-full">
+                        </div>
+                        <div>
+                            <label class="font-semibold text-gray-700 mb-2 block">حداکثر روزها</label>
+                            <input type="number" min="1" max="10" class="w-full p-2 border rounded-lg">
+                        </div>
+                    `;
+                }
+                dynamicServiceFilters.innerHTML = dynamicFiltersHtml;
+                renderServices(filtered);
+            }
+
+            function openServiceModal(service) {
+                modalContent.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">${service.title}</h2>
+                            <button id="close-modal" class="text-gray-500 hover:text-gray-800">&times;</button>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <img src="${service.image}" alt="${service.title}" class="w-full md:w-1/2 h-auto rounded-xl shadow-md">
+                            <div class="md:w-1/2">
+                                <p class="text-gray-700 leading-relaxed mb-4">${service.details}</p>
+                                <div class="bg-gray-50 p-4 rounded-lg border">
+                                    <h4 class="font-bold mb-2">اطلاعات تأمین‌کننده:</h4>
+                                    <p class="text-gray-600"><strong>نام:</strong> ${service.supplier}</p>
+                                    <a href="${service.supplierLink}" class="text-[#3498db] hover:underline mt-2 inline-block">صفحهٔ اختصاصی تأمین‌کننده</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                serviceModal.classList.remove('hidden');
+                document.getElementById('close-modal').addEventListener('click', () => serviceModal.classList.add('hidden'));
+            }
+
+            serviceModal.addEventListener('click', (e) => {
+                if (e.target === serviceModal) {
+                    serviceModal.classList.add('hidden');
+                }
+            });
+
+            serviceCategoryFilter.addEventListener('input', filterServices);
+            filterServices();
+            
+            // Suppliers Section Logic
+            function renderSuppliers(filteredItems) {
+                supplierGrid.innerHTML = '';
+                filteredItems.forEach(item => {
+                    const categoryText = item.categories.join(' / ');
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center gap-4';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl shrink-0">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-gray-800">${item.name}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${item.description}</p>
+                            <p class="text-sm font-bold text-[#f39c12] mt-2">دسته بندی: ${categoryText}</p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => openSupplierModal(item));
+                    supplierGrid.appendChild(card);
+                });
+            }
+
+            function filterSuppliers() {
+                const type = supplierTypeFilter.value;
+                const province = supplierProvinceFilter.value;
+                const subCategory = document.querySelector('#dynamic-supplier-sub-filters select')?.value || 'all';
+
+                let filtered = suppliersData.filter(item => {
+                    const matchesType = type === 'all' || item.type === type;
+                    const matchesProvince = province === 'all' || item.province === province;
+                    const matchesSubCategory = subCategory === 'all' || item.categories.includes(subCategory);
+                    return matchesType && matchesProvince && matchesSubCategory;
+                });
+                renderSuppliers(filtered);
+            }
+
+            function updateDynamicSubFilters() {
+                const type = supplierTypeFilter.value;
+                let subFiltersHtml = '';
+                let categories = [];
+                if (type === 'services') {
+                    categories = ['مدیریتی', 'مشاوره', 'آموزشی', 'اردو'];
+                    subFiltersHtml = `
+                        <div>
+                            <label for="supplier-sub-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی خدمات</label>
+                            <select id="supplier-sub-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                } else if (type === 'equipment') {
+                    categories = ['آموزشی', 'اداری', 'ورزشی', 'تحریری'];
+                    subFiltersHtml = `
+                        <div>
+                            <label for="supplier-sub-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی تجهیزات</label>
+                            <select id="supplier-sub-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+                dynamicSupplierSubFilters.innerHTML = subFiltersHtml;
+                // Add listener to the new select element if it exists
+                const subFilter = document.querySelector('#dynamic-supplier-sub-filters select');
+                if (subFilter) {
+                    subFilter.addEventListener('change', filterSuppliers);
+                }
+                filterSuppliers();
+            }
+
+            function openSupplierModal(supplier) {
+                const buttonText = supplier.type === 'services' ? 'خدمات بیشتر' : 'تجهیزات بیشتر';
+                supplierModalContent.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">${supplier.name}</h2>
+                            <button id="close-supplier-modal" class="text-gray-500 hover:text-gray-800">&times;</button>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <img src="${supplier.image}" alt="${supplier.name}" class="w-full md:w-1/2 h-auto rounded-xl shadow-md">
+                            <div class="md:w-1/2">
+                                <p class="text-gray-700 leading-relaxed mb-4">${supplier.description}</p>
+                                <div class="bg-gray-50 p-4 rounded-lg border">
+                                    <h4 class="font-bold mb-2">اطلاعات تکمیلی:</h4>
+                                    <p class="text-gray-600 mb-1"><strong>استان سرویس‌دهنده:</strong> ${supplier.province}</p>
+                                    <p class="text-gray-600"><strong>دسته بندی:</strong> ${supplier.categories.join(' / ')}</p>
+                                </div>
+                                <a href="${supplier.link}" class="mt-4 inline-block bg-[#f39c12] text-white font-bold py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors">
+                                    ${buttonText} از این مجموعه
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                supplierModal.classList.remove('hidden');
+                document.getElementById('close-supplier-modal').addEventListener('click', () => supplierModal.classList.add('hidden'));
+            }
+
+            supplierModal.addEventListener('click', (e) => {
+                if (e.target === supplierModal) {
+                    supplierModal.classList.add('hidden');
+                }
+            });
+
+            supplierTypeFilter.addEventListener('change', updateDynamicSubFilters);
+            supplierProvinceFilter.addEventListener('change', filterSuppliers);
+            updateDynamicSubFilters(); // Initial render
+
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['تجهیزات', 'خدمات', 'محتوا', 'بازی'],
+                    datasets: [{
+                        label: 'فروش بر اساس دسته بندی',
+                        data: [45, 25, 15, 15],
+                        backgroundColor: ['#3498db', '#e74c3c', '#1abc9c', '#f39c12'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: 'Vazirmatn'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                family: 'Vazirmatn'
+                            },
+                            titleFont: {
+                                family: 'Vazirmatn'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

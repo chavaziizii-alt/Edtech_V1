@@ -131,6 +131,17 @@
                 <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
                     <h3 class="text-lg font-bold mb-4">فیلترها</h3>
                     <div class="space-y-4">
+                        <!-- New Target Audience Filter -->
+                        <div>
+                            <label for="service-audience-filter" class="font-semibold text-gray-700 mb-2 block">مخاطب هدف</label>
+                            <select id="service-audience-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="student">دانش‌آموزان</option>
+                                <option value="teacher">معلمین</option>
+                                <option value="school">مدارس</option>
+                            </select>
+                        </div>
+                        <!-- End New Target Audience Filter -->
                         <div>
                             <label for="service-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی اصلی</label>
                             <select id="service-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
@@ -164,6 +175,17 @@
                 <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
                     <h3 class="text-lg font-bold mb-4">فیلترها</h3>
                     <div class="space-y-4">
+                         <!-- New Target Audience Filter -->
+                        <div>
+                            <label for="equipment-audience-filter" class="font-semibold text-gray-700 mb-2 block">مخاطب هدف</label>
+                            <select id="equipment-audience-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="student">دانش‌آموزان</option>
+                                <option value="teacher">معلمین</option>
+                                <option value="school">مدارس</option>
+                            </select>
+                        </div>
+                        <!-- End New Target Audience Filter -->
                         <div>
                             <label for="equipment-category-filter" class="font-semibold text-gray-700 mb-2 block">دسته بندی اصلی</label>
                             <select id="equipment-category-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
@@ -194,13 +216,26 @@
                 <aside class="md:w-1/4 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 h-fit">
                     <h3 class="text-lg font-bold mb-4">فیلترها</h3>
                     <div class="space-y-4">
-                        <!-- Supplier Type Filter -->
+                        <!-- New Target Audience Filter -->
+                        <div>
+                            <label for="supplier-audience-filter" class="font-semibold text-gray-700 mb-2 block">مخاطب هدف</label>
+                            <select id="supplier-audience-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
+                                <option value="all">همه</option>
+                                <option value="student">دانش‌آموزان</option>
+                                <option value="teacher">معلمین</option>
+                                <option value="school">مدارس</option>
+                            </select>
+                        </div>
+                        <!-- End New Target Audience Filter -->
+                        <!-- Supplier Type Filter (Modified) -->
                         <div>
                             <label for="supplier-type-filter" class="font-semibold text-gray-700 mb-2 block">نوع فعالیت</label>
                             <select id="supplier-type-filter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3498db]">
                                 <option value="all">همه</option>
                                 <option value="services">خدمات</option>
                                 <option value="equipment">تجهیزات</option>
+                                <!-- New Option Added -->
+                                <option value="educational">آموزشی</option>
                             </select>
                         </div>
                         <!-- Supplier Province Filter -->
@@ -311,6 +346,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Data updated to include targetAudience for new filter functionality
             const equipmentData = [
                 { id: 1, title: 'میز و نیمکت', category: 'آموزشی', subcategory: 'میز و صندلی', description: 'میز و نیمکت‌های استاندارد برای کلاس‌های درس.', image: "pic/nimkat-0.jpg", link: '#', supplierType: 'equipment' },
                 { id: 2, title: 'میز معلم', category: 'آموزشی', subcategory: 'میز و صندلی', description: 'میز و صندلی مناسب معلم برای کلاس.', image: "pic/miz-1.jpg", link: '#', supplierType: 'equipment' },
@@ -347,7 +383,6 @@
                 { id: 11, title: 'کاغذ A4', category: 'تحریری', subcategory: 'لوازن تحریر', description: 'فروش کاغذ در کیفیت‌های مختلف.', image: 'https://placehold.co/400x300/2ecc71/ffffff?text=تجهیزات+آزمایشگاهی', link: '#', supplierType: 'equipment' },
                 { id: 12, title: 'کاغذ A4', category: 'تحریری', subcategory: 'لوازن تحریر', description: 'فروش کاغذ در کیفیت‌های مختلف.', image: 'https://placehold.co/400x300/2ecc71/ffffff?text=تجهیزات+آزمایشگاهی', link: '#', supplierType: 'equipment' },
             ];
-
             const servicesData = [
                 { id: 1, title: 'سیستم اتوماسیون اداری', category: 'نرم‌افزار سازمانی', description: 'راهکار نرم‌افزاری برای مدیریت مکاتبات و فرآیندهای اداری', supplier: 'رایورز', supplierLink: '#', image: "pic/rayvarz-1.jpg", details: 'اتوماسیون اداری رایورز شامل مدیریت مکاتبات، آرشیو الکترونیک و گردش کار سازمانی برای بهبود بهره‌وری می‌باشد.' },
                 { id: 2, title: 'نرم‌افزار حسابداری', category: 'مالی و حسابداری', description: 'مدیریت حساب‌ها، فاکتورها و گزارش‌های مالی', supplier: 'رایمند', supplierLink: '#', image: "pic/raymand-1.png", details: 'نرم‌افزار حسابداری رایمند شامل بخش‌های خزانه‌داری، انبار و گزارشات مدیریتی برای کسب‌وکارهای کوچک و متوسط است.' },
@@ -389,7 +424,7 @@
                 { id: 7, title: 'سامانه LMS', category: 'آموزشی', description: 'سیستم مدیریت یادگیری (LMS) با قابلیت‌های متنوع برای آموزش از راه دور.', supplier: 'شرکت فناوران پویا', supplierLink: '#', image: 'https://placehold.co/400x300/34495e/ffffff?text=سامانه+LMS', details: 'قابلیت‌ها: کلاس آنلاین، آزمون‌ساز، مدیریت محتوا. توسعه‌دهنده: شرکت فناوران پویا.' },
             ];
             
-            // New Supplier Data
+            // Data updated to include targetAudience and images for modal
             const suppliersData = [
                 { id: 1, name: 'رایورز', type: 'services', categories: ['مدیریتی'], province: 'تهران', image: 'https://placehold.co/100x100/3498db/ffffff?text=رایورز', description: 'شرکت «رایورز» از قدیمی‌ترین شرکت‌های نرم‌افزاری در ایران است که در حوزه ERP، اتوماسیون اداری و مدیریت منابع فعالیت می‌کند. برای مدارس و مجموعه‌های آموزشی، راهکارهای رایورز در مدیریت مالی، حضور و غیاب، حقوق و دستمزد و اتوماسیون مکاتبات اداری کاربرد دارد.', link: 'https://rayvarz.com/', images: ['https://placehold.co/600x400/3498db/ffffff?text=رایورز+۱','https://placehold.co/600x400/3498db/ffffff?text=رایورز+۲','https://placehold.co/600x400/3498db/ffffff?text=رایورز+۳'] },
                 { id: 2, name: 'رایمند', type: 'services', categories: ['مدیریتی'], province: 'تهران', image: 'https://placehold.co/100x100/9b59b6/ffffff?text=رایمند', description: 'رایمند یک داشبورد و سامانه نرم‌افزاری مدیریتی است که امکان مدیریت فرآیندهای آموزشی و اداری مدارس را فراهم می‌کند.', link: '#', images: ['https://placehold.co/600x400/9b59b6/ffffff?text=رایمند+۱','https://placehold.co/600x400/9b59b6/ffffff?text=رایمند+۲','https://placehold.co/600x400/9b59b6/ffffff?text=رایمند+۳'] },
@@ -442,10 +477,14 @@
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             
+            // Equipment Elements
             const equipmentCategoryFilter = document.getElementById('equipment-category-filter');
+            const equipmentAudienceFilter = document.getElementById('equipment-audience-filter'); // New Filter
             const equipmentGrid = document.getElementById('equipment-grid');
 
+            // Services Elements
             const serviceCategoryFilter = document.getElementById('service-category-filter');
+            const serviceAudienceFilter = document.getElementById('service-audience-filter'); // New Filter
             const serviceGrid = document.getElementById('service-grid');
             const dynamicServiceFilters = document.getElementById('dynamic-service-filters');
             const serviceModal = document.getElementById('service-modal');
@@ -454,6 +493,7 @@
             // Supplier Elements
             const supplierTypeFilter = document.getElementById('supplier-type-filter');
             const supplierProvinceFilter = document.getElementById('supplier-province-filter');
+            const supplierAudienceFilter = document.getElementById('supplier-audience-filter'); // New Filter
             const supplierGrid = document.getElementById('supplier-grid');
             const dynamicSupplierSubFilters = document.getElementById('dynamic-supplier-sub-filters');
             const supplierModal = document.getElementById('supplier-modal');
@@ -515,11 +555,19 @@
 
             function filterEquipment() {
                 const category = equipmentCategoryFilter.value;
-                const filtered = equipmentData.filter(item => category === 'all' || item.category === category);
+                const audience = equipmentAudienceFilter.value; // New Filter Value
+
+                const filtered = equipmentData.filter(item => {
+                    const matchesCategory = category === 'all' || item.category === category;
+                    // Check if the selected audience is included in the item's targetAudience array
+                    const matchesAudience = audience === 'all' || item.targetAudience.includes(audience); 
+                    return matchesCategory && matchesAudience;
+                });
                 renderEquipment(filtered);
             }
 
             equipmentCategoryFilter.addEventListener('input', filterEquipment);
+            equipmentAudienceFilter.addEventListener('input', filterEquipment); // New Listener
             filterEquipment();
 
             // Services Section Logic
@@ -541,7 +589,14 @@
 
             function filterServices() {
                 const category = serviceCategoryFilter.value;
-                const filtered = servicesData.filter(item => category === 'all' || item.category === category);
+                const audience = serviceAudienceFilter.value; // New Filter Value
+                
+                const filtered = servicesData.filter(item => {
+                    const matchesCategory = category === 'all' || item.category === category;
+                    // Check if the selected audience is included in the item's targetAudience array
+                    const matchesAudience = audience === 'all' || item.targetAudience.includes(audience); 
+                    return matchesCategory && matchesAudience;
+                });
                 
                 let dynamicFiltersHtml = '';
                 if (category === 'اردو') {
@@ -584,13 +639,8 @@
                 document.getElementById('close-modal').addEventListener('click', () => serviceModal.classList.add('hidden'));
             }
 
-            serviceModal.addEventListener('click', (e) => {
-                if (e.target === serviceModal) {
-                    serviceModal.classList.add('hidden');
-                }
-            });
-
             serviceCategoryFilter.addEventListener('input', filterServices);
+            serviceAudienceFilter.addEventListener('input', filterServices); // New Listener
             filterServices();
             
             // Suppliers Section Logic
@@ -616,13 +666,29 @@
             function filterSuppliers() {
                 const type = supplierTypeFilter.value;
                 const province = supplierProvinceFilter.value;
+                const audience = supplierAudienceFilter.value; // New Filter Value
                 const subCategory = document.querySelector('#dynamic-supplier-sub-filters select')?.value || 'all';
 
                 let filtered = suppliersData.filter(item => {
-                    const matchesType = type === 'all' || item.type === type;
+                    let matchesType = false;
+                    
+                    // Logic for the new "آموزشی" (educational) type filter
+                    if (type === 'all') {
+                        matchesType = true;
+                    } else if (type === 'educational') {
+                        // Filters suppliers that have 'آموزشی' in their categories array
+                        matchesType = item.categories.includes('آموزشی');
+                    } else {
+                        // Filters by the main type: 'services' or 'equipment'
+                        matchesType = item.type === type;
+                    }
+                    
                     const matchesProvince = province === 'all' || item.province === province;
+                    // Check if the selected audience is included in the item's targetAudience array
+                    const matchesAudience = audience === 'all' || item.targetAudience.includes(audience); 
                     const matchesSubCategory = subCategory === 'all' || item.categories.includes(subCategory);
-                    return matchesType && matchesProvince && matchesSubCategory;
+
+                    return matchesType && matchesProvince && matchesAudience && matchesSubCategory;
                 });
                 renderSuppliers(filtered);
             }
@@ -631,6 +697,7 @@
                 const type = supplierTypeFilter.value;
                 let subFiltersHtml = '';
                 let categories = [];
+                // Only show sub-filters if a main category (services or equipment) is selected, not 'educational' or 'all'
                 if (type === 'services') {
                     categories = ['مدیریتی', 'مشاوره', 'آموزشی', 'اردو'];
                     subFiltersHtml = `
@@ -665,6 +732,8 @@
 
             function openSupplierModal(supplier) {
                 const buttonText = supplier.type === 'services' ? 'خدمات' : 'کالا';
+                // Note: The image-gallery itself does not currently have click-to-zoom functionality, 
+                // but the images are displayed. This is a placeholder for future enhancement if needed.
                 const galleryHtml = supplier.images.map(imgSrc => `<img src="${imgSrc}" alt="${supplier.name}" class="w-full h-auto object-cover rounded-lg shadow">`).join('');
                 
                 supplierModalContent.innerHTML = `
@@ -706,6 +775,7 @@
 
             supplierTypeFilter.addEventListener('change', updateDynamicSubFilters);
             supplierProvinceFilter.addEventListener('change', filterSuppliers);
+            supplierAudienceFilter.addEventListener('change', filterSuppliers); // New Listener
             updateDynamicSubFilters(); // Initial render
 
             const ctx = document.getElementById('salesChart').getContext('2d');
